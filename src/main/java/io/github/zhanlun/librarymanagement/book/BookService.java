@@ -1,43 +1,31 @@
 package io.github.zhanlun.librarymanagement.book;
 
+import io.github.zhanlun.librarymanagement.exception.BadRequestException;
 import io.github.zhanlun.librarymanagement.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.github.zhanlun.librarymanagement.model.PagingUtil.getPageable;
+
 @Service
 public class BookService {
     private final BookRepository bookRepository;
+    private final SubjectRepository subjectRepository;
 
     @Autowired
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, SubjectRepository subjectRepository) {
         this.bookRepository = bookRepository;
+        this.subjectRepository = subjectRepository;
     }
 
     public Page<Book> getBooks(Map<String, String> allRequestParams) {
-        int start = Integer.parseInt(allRequestParams.get("_start"));
-        int end = Integer.parseInt(allRequestParams.get("_end"));
-        int pageSize = end - start;
-        int pageStart = start / pageSize;
-        String sort = allRequestParams.get("_sort");
-        boolean isDesc = allRequestParams.get("_order").equalsIgnoreCase("DESC");
-        if (sort == null) {
-            sort = "name";
-        }
-        if (sort.contains(".")) {
-            sort = sort.replace("id", "name");
-        }
-        Sort sortBy = Sort.by(sort);
-        sortBy = isDesc ? sortBy.descending() : sortBy.ascending();
-
-        Pageable pageable = PageRequest.of(pageStart, pageSize, sortBy);
+        Pageable pageable = getPageable(allRequestParams);
 
         // filters
         String name = allRequestParams.get("name");
@@ -55,13 +43,19 @@ public class BookService {
         return bookOptional.get();
     }
 
-    public Book addBook(Book book) {
+    public Book addBook(Book book) throws BadRequestException {
+        if (book.getSubject() == null || !subjectRepository.existsById(book.getSubject().getId())) {
+            throw BadRequestException.createWith("Subject is not valid");
+        }
         return bookRepository.save(book);
     }
 
-    public Book updateBook(Integer id, Book book) throws NotFoundException {
+    public Book updateBook(Integer id, Book book) throws NotFoundException, BadRequestException {
         if (!bookRepository.existsById(id)) {
             throw NotFoundException.createWith("Book with id " + id + " not found");
+        }
+        if (book.getSubject() == null || !subjectRepository.existsById(book.getSubject().getId())) {
+            throw BadRequestException.createWith("Subject is not valid");
         }
         book.setId(id);
         return bookRepository.save(book);
@@ -70,45 +64,4 @@ public class BookService {
     public List<Book> getBooksByIdList(Integer[] idList) {
         return bookRepository.findAllById(List.of(idList));
     }
-
-//    public Page<Book> getBooks(Integer[] range, String[] sort, Map<String, Object> filter) {
-//        int start = 0, end = 10;
-//        if (range != null) {
-//            start = range[0];
-//            end = range[1];
-//        }
-//        int pageSize = end - start;
-//        int pageStart = start / pageSize;
-//
-//        Sort sortBy;
-//        Pageable pageable;
-//        if (sort == null) {
-//            pageable = PageRequest.of(pageStart, pageSize);
-//        } else {
-//            String sortKey = sort[0];
-//            boolean isDesc = sort[1].toUpperCase().equals("DESC");
-//            if (sortKey.contains(".")) {
-//                sortKey = sortKey.replace("id", "name");
-//            }
-//            sortBy = Sort.by(sortKey);
-//            pageable = PageRequest.of(pageStart, pageSize, sortBy);
-//            sortBy = isDesc ? sortBy.descending() : sortBy.ascending();
-//        }
-//
-//        // filters
-//
-//        String name = null;
-//        Integer subjectId = null;
-//        if (filter != null) {
-//            Map<String, String> filterMap =
-//            Object nameObject = filter.get("name");
-//            name = nameObject == null ? null : nameObject.toString();
-//
-//            Object subjectIdObject = filter.get("subject.id");
-//            String subjectIdString = subjectIdObject == null ? null : subjectIdObject.toString();
-//            subjectId = subjectIdString == null ? null : Integer.parseInt(subjectIdString);
-//        }
-//
-//        return bookRepository.search(pageable, name, subjectId);
-//    }
 }

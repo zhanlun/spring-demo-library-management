@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -50,13 +51,13 @@ public class VisitorController {
     }
 
     @PostMapping
-    public ResponseEntity<Visitor> addVisitor(@RequestBody Visitor visitor) {
+    public ResponseEntity<Visitor> addVisitor(@Valid @RequestBody Visitor visitor) {
         Visitor createdVisitor = visitorService.addVisitor(visitor);
         return new ResponseEntity<>(createdVisitor, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Visitor> updateVisitor(@RequestBody Visitor visitor, @PathVariable("id") Integer id) throws NotFoundException {
+    public ResponseEntity<Visitor> updateVisitor(@Valid @RequestBody Visitor visitor, @PathVariable("id") Integer id) throws NotFoundException {
         Visitor createdVisitor = visitorService.updateVisitor(id, visitor);
         return ResponseEntity.ok().body(createdVisitor);
     }

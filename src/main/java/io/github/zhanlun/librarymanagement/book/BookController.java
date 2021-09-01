@@ -1,5 +1,6 @@
 package io.github.zhanlun.librarymanagement.book;
 
+import io.github.zhanlun.librarymanagement.exception.BadRequestException;
 import io.github.zhanlun.librarymanagement.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -55,13 +57,13 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> addBook(@RequestBody Book book) {
+    public ResponseEntity<Book> addBook(@Valid @RequestBody Book book) throws BadRequestException {
         Book createdBook = bookService.addBook(book);
         return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@RequestBody Book book, @PathVariable("id") Integer id) throws NotFoundException {
+    public ResponseEntity<Book> updateBook(@Valid @RequestBody Book book, @PathVariable("id") Integer id) throws NotFoundException, BadRequestException {
         Book createdBook = bookService.updateBook(id, book);
         return ResponseEntity.ok().body(book);
     }

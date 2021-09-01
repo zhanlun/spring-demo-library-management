@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.github.zhanlun.librarymanagement.model.PagingUtil.getPageable;
+
 @Service
 public class SubjectService {
     private final SubjectRepository subjectRepository;
@@ -38,20 +40,7 @@ public class SubjectService {
     }
 
     public Page<Subject> getSubjects(Map<String, String> allRequestParams) {
-        int start = Integer.parseInt(allRequestParams.get("_start"));
-        int end = Integer.parseInt(allRequestParams.get("_end"));
-        int pageSize = end - start;
-        int pageStart = start / pageSize;
-        String sort = allRequestParams.get("_sort");
-        boolean isDesc = allRequestParams.get("_order").equalsIgnoreCase("DESC");
-        if (sort == null) {
-            sort = "name";
-        }
-        Sort sortBy = Sort.by(sort);
-        sortBy = isDesc ? sortBy.descending() : sortBy.ascending();
-
-        Pageable pageable = PageRequest.of(pageStart, pageSize, sortBy);
-
+        Pageable pageable = getPageable(allRequestParams);
         return subjectRepository.search(pageable);
     }
 

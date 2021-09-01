@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +51,7 @@ public class SubjectController {
     }
 
     @PostMapping
-    public ResponseEntity<Subject> addSubject(@RequestBody Subject subject) {
+    public ResponseEntity<Subject> addSubject(@Valid @RequestBody Subject subject) {
         Subject createdSubject = subjectService.addSubject(subject);
         return new ResponseEntity<>(createdSubject, HttpStatus.CREATED);
     }

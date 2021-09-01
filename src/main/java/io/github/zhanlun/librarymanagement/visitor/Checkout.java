@@ -5,6 +5,7 @@ import io.github.zhanlun.librarymanagement.book.Book;
 import io.github.zhanlun.librarymanagement.model.BaseEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -13,19 +14,23 @@ public class Checkout extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("checkouts")
     @JoinColumn(name = "book_id")
+    @NotNull
     private Book book;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("checkouts")
     @JoinColumn(name = "visitor_id")
+    @NotNull
     private Visitor visitor;
 
     @Column(name = "checkout_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
     private Date checkoutDate;
 
     @Column(name = "due_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
     private Date dueDate;
 
     @Column(name = "return_date")
