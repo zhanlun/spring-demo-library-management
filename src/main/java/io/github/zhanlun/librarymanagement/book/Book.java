@@ -25,7 +25,7 @@ public class Book extends NamedEntity {
     @Column(length = 100000)
     private String summary;
 
-    @Column
+    @Column(length = 1000)
     private String coverImagePath;
 
     @Column
