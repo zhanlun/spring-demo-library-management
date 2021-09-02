@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/books")
@@ -26,10 +27,15 @@ public class BookController {
         long total;
         Page<Book> pageResult = bookService.getBooks(allRequestParams);
         results = pageResult.toList();
+        if (allRequestParams.get("isAvailable") != null && allRequestParams.get("isAvailable").equals("true")) {
+            results = results.stream().filter(b -> b.getAvailableCopy() > 0).collect(Collectors.toList());
+        }
         total = pageResult.getTotalElements();
         headers.add("X-Total-Count", String.valueOf(total));
         headers.add("Access-Control-Expose-Headers", "X-Total-Count");
-        return ResponseEntity.ok().headers(headers).body(results);
+        return ResponseEntity.ok().headers(headers).body(results.stream()
+                .distinct()
+                .collect(Collectors.toList()));
     }
 
     /**

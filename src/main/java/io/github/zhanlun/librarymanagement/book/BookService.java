@@ -31,7 +31,6 @@ public class BookService {
         String name = allRequestParams.get("name");
         String subjectIdString = allRequestParams.get("subject.id");
         Integer subjectId = subjectIdString == null ? null : Integer.parseInt(subjectIdString);
-
         return bookRepository.search(pageable, name, subjectId);
     }
 
@@ -58,6 +57,7 @@ public class BookService {
             throw BadRequestException.createWith("Subject is not valid");
         }
         book.setId(id);
+        book.setCheckouts(null);
         return bookRepository.save(book);
     }
 

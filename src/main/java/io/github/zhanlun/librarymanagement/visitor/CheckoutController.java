@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/checkouts")
@@ -29,7 +30,9 @@ public class CheckoutController {
         total = pageResult.getTotalElements();
         headers.add("X-Total-Count", String.valueOf(total));
         headers.add("Access-Control-Expose-Headers", "X-Total-Count");
-        return ResponseEntity.ok().headers(headers).body(results);
+        return ResponseEntity.ok().headers(headers).body(results.stream()
+                .distinct()
+                .collect(Collectors.toList()));
     }
 
     @GetMapping(params = {"id"})

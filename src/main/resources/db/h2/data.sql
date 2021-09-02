@@ -57,7 +57,7 @@ INSERT INTO visitor (id, first_name, last_name)
 VALUES (4, 'Patricia', 'Lebsack');
 
 INSERT INTO checkout (id, book_id, visitor_id, checkout_date, due_date, return_date)
-VALUES (1, 1, 1, '2021-08-11 11:00:00', '2021-09-11 11:00:00', null);
+VALUES (1, 1, 1, '2021-08-31 11:00:00', '2021-10-01 11:00:00', null);
 
 INSERT INTO checkout (id, book_id, visitor_id, checkout_date, due_date, return_date)
 VALUES (2, 3, 1, '2021-07-21 11:00:00', '2021-08-21 11:00:00', '2021-08-18 15:00:00');

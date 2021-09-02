@@ -10,7 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface BookRepository extends JpaRepository<Book, Integer> {
-    @Query("SELECT b FROM Book b WHERE (:name is null OR LOWER(b.name) LIKE LOWER(concat('%', :name, '%'))) " +
+    @Query("SELECT b FROM Book b LEFT JOIN b.checkouts bc " +
+            "WHERE (:name is null OR LOWER(b.name) LIKE LOWER(concat('%', :name, '%'))) " +
             "AND (:subjectId is null OR b.subject.id = :subjectId) ")
     Page<Book> search(Pageable pageable, @Param("name") String name, @Param("subjectId") Integer subjectId);
 

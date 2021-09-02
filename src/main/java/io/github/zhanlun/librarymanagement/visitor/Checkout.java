@@ -12,7 +12,7 @@ import java.util.Date;
 @Table(name = "checkout")
 public class Checkout extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("checkouts")
+    @JsonIgnoreProperties({"checkouts", "availableCopy"})
     @JoinColumn(name = "book_id")
     @NotNull
     private Book book;

@@ -55,23 +55,6 @@ public class VisitorService {
 
         return visitorRepository.search(pageable, name);
     }
-//
-//    private Pageable getPageable(Map<String, String> allRequestParams) {
-//        String _start = allRequestParams.get("_start");
-//        String _end = allRequestParams.get("_end");
-//        int start = _start == null ? 0 : Integer.parseInt(_start);
-//        int end = _end == null ? 10 : Integer.parseInt(_end);
-//        int pageSize = end - start;
-//        int pageStart = start / pageSize;
-//        String _sort = allRequestParams.get("_sort");
-//        String _order = allRequestParams.get("_order");
-//        boolean isDesc = _order != null && _order.equalsIgnoreCase("DESC");
-//        _sort = _sort == null ? "id" : _sort;
-//        Sort sortBy = Sort.by(_sort);
-//        sortBy = isDesc ? sortBy.descending() : sortBy.ascending();
-//        Pageable pageable = PageRequest.of(pageStart, pageSize, sortBy);
-//        return pageable;
-//    }
 
     public List<Visitor> getVisitorsByIdList(Integer[] idList) {
         return visitorRepository.findAllById(List.of(idList));

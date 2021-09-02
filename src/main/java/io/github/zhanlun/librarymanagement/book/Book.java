@@ -2,10 +2,13 @@ package io.github.zhanlun.librarymanagement.book;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.github.zhanlun.librarymanagement.model.NamedEntity;
+import io.github.zhanlun.librarymanagement.visitor.Checkout;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "book")
@@ -39,6 +42,13 @@ public class Book extends NamedEntity {
     @Column
     @NotNull
     private Integer numberOfCopy;
+
+    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("book")
+    private List<Checkout> checkouts;
+
+    @Transient
+    private Integer availableCopy;
 
     public Subject getSubject() {
         return subject;
@@ -92,7 +102,21 @@ public class Book extends NamedEntity {
         return numberOfCopy;
     }
 
-    public void setNumberOfCopy(Integer numberOfCopy) {
-        this.numberOfCopy = numberOfCopy;
+    public Integer getAvailableCopy() {
+        return checkouts == null || checkouts.isEmpty() ?
+                numberOfCopy :
+                numberOfCopy - (int) checkouts.stream().filter(c -> c.getReturnDate() == null).count();
+    }
+
+    public List<Checkout> getCheckouts() {
+        return checkouts;
+    }
+
+    public void setCheckouts(List<Checkout> checkouts) {
+        this.checkouts = checkouts;
+    }
+
+    public void setAvailableCopy(Integer availableCopy) {
+        this.availableCopy = availableCopy;
     }
 }
